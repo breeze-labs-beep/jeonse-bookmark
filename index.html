@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>전세 지킴이 북마크</title>
+  <link rel="icon" href="https://notion-emojis.s3-us-west-2.amazonaws.com/prod/svg-twitter/1f3e0.svg">
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #37352f;
+      --gray-hover: rgba(55, 53, 47, 0.08);
+      --gray-text: rgba(55, 53, 47, 0.65);
+      --border-color: rgba(55, 53, 47, 0.16);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #191919;
+        --text-color: #d9d9d9;
+        --gray-hover: rgba(255, 255, 255, 0.055);
+        --gray-text: rgba(255, 255, 255, 0.443);
+        --border-color: rgba(255, 255, 255, 0.13);
+      }
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    header {
+      margin-bottom: 48px;
+    }
+
+    h1 {
+      font-size: 40px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .description {
+      color: var(--gray-text);
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .category-card {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      text-decoration: none;
+      color: inherit;
+      transition: background-color 0.1s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .category-card:hover {
+      background-color: var(--gray-hover);
+    }
+
+    .category-icon {
+      font-size: 24px;
+      margin-right: 16px;
+    }
+
+    .category-info {
+      flex: 1;
+    }
+
+    .category-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-color);
+    }
+
+    .category-count {
+      font-size: 12px;
+      color: var(--gray-text);
+    }
+
+    footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      text-align: left;
+      color: var(--gray-text);
+      font-size: 14px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--gray-text);
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1><span class="icon">🏠</span> 전세 지킴이 북마크</h1>
+      <p class="description">원하는 정보의 분류를 선택하세요.</p>
+    </header>
+
+    <div id="content">
+      <div class="loading">데이터를 불러오는 중입니다...</div>
+    </div>
+
+    <footer>
+      <p>© 2025 Jeonse Safety Guide</p>
+    </footer>
+  </div>
+
+  <script>
+    async function init() {
+      const container = document.getElementById('content');
+      try {
+        const response = await fetch('metadata.json');
+        if (!response.ok) throw new Error("Failed to load metadata");
+
+        const data = await response.json();
+        const categories = {};
+
+        // Group by category
+        data.forEach(item => {
+          // Normalize category string
+          const cat = item.category ? item.category.trim() : "미분류";
+          if (!categories[cat]) {
+            categories[cat] = 0;
+          }
+          categories[cat]++;
+        });
+
+        // Clear loading
+        container.innerHTML = '';
+
+        const grid = document.createElement('div');
+        grid.className = 'category-grid';
+
+        // Defined Sort Order
+        const sortOrder = [
+          "부동산 정보/시세",
+          "주거지원/복지",
+          "전월세 계약/신고",
+          "등기/등본",
+          "보증/보험",
+          "관리비/수선",
+          "유틸리티/기타서비스",
+          "세금/세무",
+          "전세사기/피해",
+          "법률/소송",
+          "뉴스/정보",
+          "기타"
+        ];
+
+        // Sort categories based on the defined order
+        // If a category is not in the list, put it at the end
+        const sortedCats = Object.keys(categories).sort((a, b) => {
+          const indexA = sortOrder.indexOf(a);
+          const indexB = sortOrder.indexOf(b);
+
+          // Both found
+          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+          // Only A found (A comes first)
+          if (indexA !== -1) return -1;
+          // Only B found (B comes first)
+          if (indexB !== -1) return 1;
+          // Neither found (alphabetical fallback)
+          return a.localeCompare(b);
+        });
+
+        sortedCats.forEach(cat => {
+          if (!cat) return; // skip empty if any
+
+          const card = document.createElement('a');
+          card.className = 'category-card';
+          // Encode category for URL
+          card.href = `category.html?name=${encodeURIComponent(cat)}`;
+
+          const icon = document.createElement('span');
+          icon.className = 'category-icon';
+          icon.textContent = '📂'; // Default icon
+
+          const info = document.createElement('div');
+          info.className = 'category-info';
+
+          const name = document.createElement('div');
+          name.className = 'category-name';
+          name.textContent = cat;
+
+          const count = document.createElement('div');
+          count.className = 'category-count';
+          count.textContent = `${categories[cat]}개 항목`;
+
+          info.appendChild(name);
+          info.appendChild(count);
+
+          card.appendChild(icon);
+          card.appendChild(info);
+
+          grid.appendChild(card);
+        });
+
+        container.appendChild(grid);
+
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = `<div style="color:red; text-align:center;">데이터를 불러오는 데 실패했습니다.<br>${error.message}</div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+
+</html>
