@@ -42,6 +42,12 @@
     "domain": "www.scourt.go.kr"
   },
   {
+    "url": "https://housing.gg.go.kr/board/23100200000001/SYS250730-04602795/view?bbsId=SYS231002-00000001&postCls=&pageNumber=0&condition=both&filter=",
+    "title": "경기도 전세사기피해자 지원 및 주거안정에 관한 특별법에 따른 전세사기피해자등 지원내용 안내",
+    "category": "공공기관/필수 사이트",
+    "domain": ""
+  },
+  {
     "url": "https://rt.molit.go.kr/",
     "title": "국토교통부 실거래가공개시스템",
     "category": "공공기관/필수 사이트",
@@ -76,6 +82,12 @@
     "title": "보증이행안내 | 보증이행안내 | 주택도시보증공사",
     "category": "공공기관/필수 사이트",
     "domain": "www.khug.or.kr"
+  },
+  {
+    "url": "https://www.hf.go.kr/ko/sub02/sub02_07_03.do",
+    "title": "HF 특례 채무조정 | 한국주택금융공사",
+    "category": "공공기관/필수 사이트",
+    "domain": "hf.go.kr"
   },
   {
     "url": "https://www.law.go.kr/lsInfoP.do?lsId=014450&ancYnChk=0#0000",
@@ -198,20 +210,44 @@
     "domain": "loan-wisly.kr"
   },
   {
-    "url": "https://n.news.naver.com/article/018/0004850085",
-    "title": "\"묵시적 계약갱신 후 퇴거 3개월 전 통보하면 세입자도 복비 절반 부담\"",
+    "url": "https://link.naver.com/bridge?url=https%3A%2F%2Fm.blog.naver.com%2FPostView.naver%3FblogId%3Dlunaparkblog%26logNo%3D222385025290%26proxyReferer%3Dhttps%3A%252F%252Fm.blog.naver.com%252Fronisize%252F223092361923%26trackingCode%3Dblog_postview&dst=naversearchapp%3A%2F%2Finappbrowser%3Furl%3Dhttps%253A%252F%252Fm.blog.naver.com%252FPostView.naver%253FblogId%253Dlunaparkblog%2526logNo%253D222385025290%2526proxyReferer%253Dhttps%253A%25252F%25252Fm.blog.naver.com%25252Fronisize%25252F223092361923%2526trackingCode%253Dblog_postview%26version%3D10%26sourceReferer%3Dshare",
+    "title": "루나의 전세역전 - 프롤로그",
     "category": "기타",
     "domain": "naver.me"
   },
   {
-    "url": "https://m.blog.naver.com/rose_dentelle/223397488295",
-    "title": "변론기일(재판) 출석(재판 소요시간, 준비물, 법원 방문횟수)",
+    "url": "https://m.blog.naver.com/lvst7370/223716412364",
+    "title": "등기부등본 열람부터 보는 법까지!",
+    "category": "기타",
+    "domain": "blog.naver.com"
+  },
+  {
+    "url": "https://blog.naver.com/PostView.naver?blogId=raemy27&logNo=223964090708&proxyReferer=&noTrackingCode=true",
+    "title": "전자소송에서 조세채권안분(국세, 지방세) 신청하기",
+    "category": "기타",
+    "domain": "blog.naver.com"
+  },
+  {
+    "url": "https://blog.naver.com/schtongki/222187038640",
+    "title": "경매 낙찰 후 셀프등기 하는 법",
     "category": "기타",
     "domain": "blog.naver.com"
   },
   {
     "url": "https://m.blog.naver.com/991x209/223621174750",
     "title": "권리신고 및 배당요구 온라인으로 신청하기",
+    "category": "기타",
+    "domain": "blog.naver.com"
+  },
+  {
+    "url": "https://n.news.naver.com/article/018/0004850085",
+    "title": "\"묵시적 계약갱신 후 퇴거 3개월 전 통보하면 세입자도 복비 절반 부담\"",
+    "category": "기타",
+    "domain": "news.naver.com"
+  },
+  {
+    "url": "https://m.blog.naver.com/rose_dentelle/223397488295",
+    "title": "변론기일(재판) 출석(재판 소요시간, 준비물, 법원 방문횟수)",
     "category": "기타",
     "domain": "blog.naver.com"
   },
@@ -313,7 +349,7 @@
   },
   {
     "url": "https://m.blog.naver.com/joo_season/223862653412",
-    "title": "[전세사기 7편] 전세사기 피해자 보증보험 이행청구 '임대인 상속인 찾기' (전자소송 후 보정명령서 들고 주민센터 방문)",
+    "title": "전세사기 피해자 보증보험 이행청구 '임대인 상속인 찾기' (전자소송 후 보정명령서 들고 주민센터 방문)",
     "category": "기타",
     "domain": "blog.naver.com"
   },
@@ -430,18 +466,6 @@
     "title": "대항력 있는 임차인인 동시에 전세권자인 경우 최선순위 전세권자로서 배당요구를 하여  전세권이 매각으로 소멸되었으나, 변제받지 못한 나머지 보증금이 있는 경우 대항력 유무 : 변호사김상화법률사무소",
     "category": "기타",
     "domain": "daegulawyer.co.kr"
-  },
-  {
-    "url": "https://m.blog.naver.com/lvst7370/223716412364",
-    "title": "등기부등본 열람부터 보는 법까지!",
-    "category": "기타",
-    "domain": "blog.naver.com"
-  },
-  {
-    "url": "https://link.naver.com/bridge?url=https%3A%2F%2Fm.blog.naver.com%2FPostView.naver%3FblogId%3Dlunaparkblog%26logNo%3D222385025290%26proxyReferer%3Dhttps%3A%252F%252Fm.blog.naver.com%252Fronisize%252F223092361923%26trackingCode%3Dblog_postview&dst=naversearchapp%3A%2F%2Finappbrowser%3Furl%3Dhttps%253A%252F%252Fm.blog.naver.com%252FPostView.naver%253FblogId%253Dlunaparkblog%2526logNo%253D222385025290%2526proxyReferer%253Dhttps%253A%25252F%25252Fm.blog.naver.com%25252Fronisize%25252F223092361923%2526trackingCode%253Dblog_postview%26version%3D10%26sourceReferer%3Dshare",
-    "title": "루나의 전세역전 - 프롤로그",
-    "category": "기타",
-    "domain": "naver.me"
   },
   {
     "url": "https://m.kin.naver.com/qna/dirs/60215/docs/482764599?answerNo=1&enc=utf8&kinsrch_src=m_nx_kin&qb=66y17Iuc7KCB6rCx7IugIOuzteu5hA%3D%3D#answer1",
@@ -778,12 +802,6 @@
     "title": "카카오뱅크 전세대출 연장 방법, 전세사기피해자등 결정 및 향후 방안",
     "category": "기타",
     "domain": "blog.naver.com"
-  },
-  {
-    "url": "https://link.naver.com/bridge?url=https%3A%2F%2Fwww.hf.go.kr%2Fko%2Fsub02%2Fsub02_07_03.do&dst=naversearchapp%3A%2F%2Finappbrowser%3Furl%3Dhttps%253A%252F%252Fwww.hf.go.kr%252Fko%252Fsub02%252Fsub02_07_03.do%26version%3D10%26sourceReferer%3Dshare",
-    "title": "특례 채무조정 | 채무조정 | 주택보증 | 한국주택금융공사",
-    "category": "기타",
-    "domain": "naver.me"
   },
   {
     "url": "https://m.blog.naver.com/bestkid7/222941839684",
