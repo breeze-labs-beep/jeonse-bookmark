@@ -144,23 +144,19 @@
     async function init() {
       const container = document.getElementById('content');
       try {
-        const response = await fetch('metadata.json');
-        if (!response.ok) throw new Error("Failed to load metadata");
+        // 1. Fetch Metadata
+        const metaResponse = await fetch('metadata.json?' + new Date().getTime());
+        if (!metaResponse.ok) throw new Error("Failed to load metadata");
+        const data = await metaResponse.json();
 
-        const data = await response.json();
+        // --- Render Categories ---
         const categories = {};
-
-        // Group by category
         data.forEach(item => {
-          // Normalize category string
           const cat = item.category ? item.category.trim() : "미분류";
-          if (!categories[cat]) {
-            categories[cat] = 0;
-          }
+          if (!categories[cat]) categories[cat] = 0;
           categories[cat]++;
         });
 
-        // Clear loading
         container.innerHTML = '';
 
         const grid = document.createElement('div');
@@ -174,33 +170,24 @@
           "유틸리티/기타서비스"
         ];
 
-        // Sort categories based on the defined order
-        // If a category is not in the list, put it at the end
         const sortedCats = Object.keys(categories).sort((a, b) => {
           const indexA = sortOrder.indexOf(a);
           const indexB = sortOrder.indexOf(b);
-
-          // Both found
           if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-          // Only A found (A comes first)
           if (indexA !== -1) return -1;
-          // Only B found (B comes first)
           if (indexB !== -1) return 1;
-          // Neither found (alphabetical fallback)
           return a.localeCompare(b);
         });
 
         sortedCats.forEach(cat => {
-          if (!cat) return; // skip empty if any
-
+          if (!cat) return;
           const card = document.createElement('a');
           card.className = 'category-card';
-          // Encode category for URL
           card.href = `category.html?name=${encodeURIComponent(cat)}`;
 
           const icon = document.createElement('span');
           icon.className = 'category-icon';
-          icon.textContent = '📂'; // Default icon
+          icon.textContent = '📂';
 
           const info = document.createElement('div');
           info.className = 'category-info';
@@ -215,12 +202,47 @@
 
           info.appendChild(name);
           info.appendChild(count);
-
           card.appendChild(icon);
           card.appendChild(info);
-
           grid.appendChild(card);
         });
+
+        // --- Render "File Downloads" Folder Link ---
+        // Check if files.json exists
+        try {
+          const filesResponse = await fetch('files.json?' + new Date().getTime());
+          if (filesResponse.ok) {
+            const filesData = await filesResponse.json();
+
+            const card = document.createElement('a');
+            card.className = 'category-card';
+            card.href = 'files.html'; // Dedicated file page
+
+            const icon = document.createElement('span');
+            icon.className = 'category-icon';
+            icon.textContent = '📂';
+
+            const info = document.createElement('div');
+            info.className = 'category-info';
+
+            const name = document.createElement('div');
+            name.className = 'category-name';
+            name.textContent = "서식 다운로드";
+
+            const count = document.createElement('div');
+            count.className = 'category-count';
+            count.textContent = `파일 모음 (${filesData.length}개)`;
+
+            info.appendChild(name);
+            info.appendChild(count);
+            card.appendChild(icon);
+            card.appendChild(info);
+
+            grid.appendChild(card);
+          }
+        } catch (e) {
+          console.log("No files.json found");
+        }
 
         container.appendChild(grid);
 
