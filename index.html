@@ -61,6 +61,36 @@
       margin-top: 8px;
     }
 
+    /* Search Bar Styles */
+    .search-container {
+      margin-top: 24px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      outline: none;
+      transition: border-color 0.1s, box-shadow 0.1s;
+      box-sizing: border-box;
+    }
+
+    .search-input:focus {
+      border-color: rgba(55, 53, 47, 0.4);
+      box-shadow: 0 0 0 2px rgba(55, 53, 47, 0.1);
+    }
+
+    .search-empty {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--gray-text);
+    }
+
     .category-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -106,6 +136,83 @@
       color: var(--gray-text);
     }
 
+    /* Bookmark Card CSS (for search results) */
+    .bookmark-card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      background-color: var(--bg-color);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      user-select: none;
+      height: 100%;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .bookmark-card:hover {
+      background-color: var(--bg-color);
+      border-color: rgba(55, 53, 47, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      text-decoration: none;
+    }
+
+    .bookmark-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--gray-text);
+      margin-bottom: 8px;
+    }
+
+    .bookmark-icon {
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bookmark-domain {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+
+    .bookmark-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bookmark-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      line-height: 1.4;
+      color: var(--text-color);
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .bookmark-desc {
+      font-size: 13px;
+      color: var(--gray-text);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
     footer {
       margin-top: 80px;
       padding-top: 24px;
@@ -129,6 +236,9 @@
     <header>
       <h1><span class="icon">🏠</span> 전세 관련 북마크</h1>
       <p class="description">원하는 정보의 분류를 선택하세요.</p>
+      <div class="search-container">
+        <input type="text" id="search-input" class="search-input" placeholder="북마크 검색 (제목, 설명, URL)">
+      </div>
     </header>
 
     <div id="content">
@@ -141,115 +251,256 @@
   </div>
 
   <script>
+    let allData = [];
+    let filesData = [];
+
     async function init() {
       const container = document.getElementById('content');
+      const searchInput = document.getElementById('search-input');
+
       try {
         // 1. Fetch Metadata
         const metaResponse = await fetch('metadata.json?' + new Date().getTime());
         if (!metaResponse.ok) throw new Error("Failed to load metadata");
-        const data = await metaResponse.json();
+        allData = await metaResponse.json();
 
-        // --- Render Categories ---
-        const categories = {};
-        data.forEach(item => {
-          const cat = item.category ? item.category.trim() : "미분류";
-          if (!categories[cat]) categories[cat] = 0;
-          categories[cat]++;
-        });
-
-        container.innerHTML = '';
-
-        const grid = document.createElement('div');
-        grid.className = 'category-grid';
-
-        // Defined Sort Order
-        const sortOrder = [
-          "공공기관/필수 사이트",
-          "추천 블로그",
-          "기타",
-          "유틸리티/기타서비스"
-        ];
-
-        const sortedCats = Object.keys(categories).sort((a, b) => {
-          const indexA = sortOrder.indexOf(a);
-          const indexB = sortOrder.indexOf(b);
-          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-          if (indexA !== -1) return -1;
-          if (indexB !== -1) return 1;
-          return a.localeCompare(b);
-        });
-
-        sortedCats.forEach(cat => {
-          if (!cat) return;
-          const card = document.createElement('a');
-          card.className = 'category-card';
-          card.href = `category.html?name=${encodeURIComponent(cat)}`;
-
-          const icon = document.createElement('span');
-          icon.className = 'category-icon';
-          icon.textContent = '📂';
-
-          const info = document.createElement('div');
-          info.className = 'category-info';
-
-          const name = document.createElement('div');
-          name.className = 'category-name';
-          name.textContent = cat;
-
-          const count = document.createElement('div');
-          count.className = 'category-count';
-          count.textContent = `${categories[cat]}개 항목`;
-
-          info.appendChild(name);
-          info.appendChild(count);
-          card.appendChild(icon);
-          card.appendChild(info);
-          grid.appendChild(card);
-        });
-
-        // --- Render "File Downloads" Folder Link ---
-        // Check if files.json exists
+        // 2. Fetch Files
         try {
           const filesResponse = await fetch('files.json?' + new Date().getTime());
           if (filesResponse.ok) {
-            const filesData = await filesResponse.json();
-
-            const card = document.createElement('a');
-            card.className = 'category-card';
-            card.href = 'files.html'; // Dedicated file page
-
-            const icon = document.createElement('span');
-            icon.className = 'category-icon';
-            icon.textContent = '📂';
-
-            const info = document.createElement('div');
-            info.className = 'category-info';
-
-            const name = document.createElement('div');
-            name.className = 'category-name';
-            name.textContent = "서식 다운로드";
-
-            const count = document.createElement('div');
-            count.className = 'category-count';
-            count.textContent = `파일 모음 (${filesData.length}개)`;
-
-            info.appendChild(name);
-            info.appendChild(count);
-            card.appendChild(icon);
-            card.appendChild(info);
-
-            grid.appendChild(card);
+            filesData = await filesResponse.json();
           }
         } catch (e) {
-          console.log("No files.json found");
+          console.log("No files.json found or error loading it", e);
         }
 
-        container.appendChild(grid);
+        // Initial Render (Categories)
+        renderCategories();
+
+        // Search Event Listener
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.trim();
+          if (query) {
+            renderSearchResults(query);
+          } else {
+            renderCategories();
+          }
+        });
 
       } catch (error) {
         console.error(error);
         container.innerHTML = `<div style="color:red; text-align:center;">데이터를 불러오는 데 실패했습니다.<br>${error.message}</div>`;
       }
+    }
+
+    function renderCategories() {
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+
+      const categories = {};
+      allData.forEach(item => {
+        const cat = item.category ? item.category.trim() : "미분류";
+        if (!categories[cat]) categories[cat] = 0;
+        categories[cat]++;
+      });
+
+      const grid = document.createElement('div');
+      grid.className = 'category-grid';
+
+      // Defined Sort Order
+      const sortOrder = [
+        "공공기관/필수 사이트",
+        "추천 블로그",
+        "기타",
+        "유틸리티/기타서비스"
+      ];
+
+      const sortedCats = Object.keys(categories).sort((a, b) => {
+        const indexA = sortOrder.indexOf(a);
+        const indexB = sortOrder.indexOf(b);
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        return a.localeCompare(b);
+      });
+
+      sortedCats.forEach(cat => {
+        if (!cat) return;
+        const card = document.createElement('a');
+        card.className = 'category-card';
+        card.href = `category.html?name=${encodeURIComponent(cat)}`;
+
+        const icon = document.createElement('span');
+        icon.className = 'category-icon';
+        icon.textContent = '📂'; // Default icon
+
+        const info = document.createElement('div');
+        info.className = 'category-info';
+
+        const name = document.createElement('div');
+        name.className = 'category-name';
+        name.textContent = cat;
+
+        const count = document.createElement('div');
+        count.className = 'category-count';
+        count.textContent = `${categories[cat]}개 항목`;
+
+        info.appendChild(name);
+        info.appendChild(count);
+        card.appendChild(icon);
+        card.appendChild(info);
+        grid.appendChild(card);
+      });
+
+      // --- Render "File Downloads" Folder Link ---
+      if (filesData.length > 0) {
+        const card = document.createElement('a');
+        card.className = 'category-card';
+        card.href = 'files.html';
+
+        const icon = document.createElement('span');
+        icon.className = 'category-icon';
+        icon.textContent = '💾';
+
+        const info = document.createElement('div');
+        info.className = 'category-info';
+
+        const name = document.createElement('div');
+        name.className = 'category-name';
+        name.textContent = "서식 다운로드";
+
+        const count = document.createElement('div');
+        count.className = 'category-count';
+        count.textContent = `파일 모음 (${filesData.length}개)`;
+
+        info.appendChild(name);
+        info.appendChild(count);
+        card.appendChild(icon);
+        card.appendChild(info);
+
+        grid.appendChild(card);
+      }
+
+      container.appendChild(grid);
+    }
+
+    function renderSearchResults(query) {
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+
+      const lowerQuery = query.toLowerCase().normalize('NFC');
+
+      // Filter Bookmarks
+      const filteredBookmarks = allData.filter(item => {
+        return (
+          (item.title && item.title.toLowerCase().normalize('NFC').includes(lowerQuery)) ||
+          (item.description && item.description.toLowerCase().normalize('NFC').includes(lowerQuery)) ||
+          (item.url && item.url.toLowerCase().includes(lowerQuery))
+        );
+      });
+
+      // Filter Files
+      const filteredFiles = filesData.filter(item => {
+        return (
+          (item.name && item.name.toLowerCase().normalize('NFC').includes(lowerQuery))
+        );
+      });
+
+      if (filteredBookmarks.length === 0 && filteredFiles.length === 0) {
+        container.innerHTML = `<div class="search-empty">"${query}"에 대한 검색 결과가 없습니다.</div>`;
+        return;
+      }
+
+      const grid = document.createElement('div');
+      grid.className = 'category-grid'; // Reuse grid layout
+
+      // Render Bookmarks
+      filteredBookmarks.forEach(item => {
+        const card = document.createElement('a');
+        card.className = 'bookmark-card';
+        card.href = item.url;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+
+        const meta = document.createElement('div');
+        meta.className = 'bookmark-meta';
+
+        const icon = document.createElement('span');
+        icon.className = 'bookmark-icon';
+        try {
+          const urlObj = new URL(item.url);
+          icon.innerHTML = `<img src="https://www.google.com/s2/favicons?domain=${urlObj.hostname}" width="14" height="14" alt="">`;
+        } catch (e) {
+          icon.textContent = "🔗";
+        }
+
+        const domain = document.createElement('span');
+        domain.className = 'bookmark-domain';
+        domain.textContent = item.domain || "link";
+
+        meta.appendChild(icon);
+        meta.appendChild(domain);
+
+        const content = document.createElement('div');
+        content.className = 'bookmark-content';
+
+        const cardTitle = document.createElement('div');
+        cardTitle.className = 'bookmark-title';
+        cardTitle.textContent = item.title || item.url;
+
+        const cardDesc = document.createElement('div');
+        cardDesc.className = 'bookmark-desc';
+        cardDesc.textContent = item.description || "";
+
+        content.appendChild(cardTitle);
+        if (item.description) {
+          content.appendChild(cardDesc);
+        }
+
+        card.appendChild(meta);
+        card.appendChild(content);
+
+        grid.appendChild(card);
+      });
+
+      // Render Files (if any match)
+      filteredFiles.forEach(file => {
+        const card = document.createElement('a');
+        card.className = 'bookmark-card';
+        card.href = file.url;
+        card.setAttribute('download', '');
+
+        const meta = document.createElement('div');
+        meta.className = 'bookmark-meta';
+
+        const icon = document.createElement('span');
+        icon.className = 'bookmark-icon';
+        icon.textContent = '📄';
+
+        const domain = document.createElement('span');
+        domain.className = 'bookmark-domain';
+        domain.textContent = '서식 파일';
+
+        meta.appendChild(icon);
+        meta.appendChild(domain);
+
+        const content = document.createElement('div');
+        content.className = 'bookmark-content';
+
+        const cardTitle = document.createElement('div');
+        cardTitle.className = 'bookmark-title';
+        cardTitle.textContent = file.name;
+
+        content.appendChild(cardTitle);
+        // No desc for files currently
+
+        card.appendChild(meta);
+        card.appendChild(content);
+
+        grid.appendChild(card);
+      });
+
+      container.appendChild(grid);
     }
 
     document.addEventListener('DOMContentLoaded', init);
