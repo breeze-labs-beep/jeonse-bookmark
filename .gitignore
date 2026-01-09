@@ -2,3 +2,6 @@ venv/
 __pycache__/
 .DS_Store
 links_metadata_classified.xlsx
+*.py
+credentials.json
+token.json
